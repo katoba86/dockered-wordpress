@@ -1,0 +1,4 @@
+DB_PASSWORD=veryverysecure
+DB_DATABASE=testdb
+DB_USERNAME=kai
+DB_PORT=3306

@@ -7,9 +7,9 @@ services:
       - 8080:80
     environment:
       WORDPRESS_DB_HOST: db
-      WORDPRESS_DB_USER: exampleuser
-      WORDPRESS_DB_PASSWORD: examplepass
-      WORDPRESS_DB_NAME: exampledb
+      WORDPRESS_DB_USER: '${DB_USERNAME:-kai}'
+      WORDPRESS_DB_PASSWORD: '${DB_PASSWORD:-notsecure}'
+      WORDPRESS_DB_NAME: '${DB_DATABASE:-database}'
     volumes:
       - ./themes:/var/www/html/wp-content/themes
       # plugins:/var/www/html/wp-content/plugins
@@ -19,12 +19,21 @@ services:
     image: mysql:8.0
     restart: always
     environment:
-      MYSQL_DATABASE: exampledb
-      MYSQL_USER: exampleuser
-      MYSQL_PASSWORD: examplepass
-      MYSQL_ROOT_PASSWORD: notsecure
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD:-notsecure}'
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_DATABASE: '${DB_DATABASE:-database}'
+      MYSQL_USER: '${DB_USERNAME:-kai}'
+      MYSQL_PASSWORD: '${DB_PASSWORD:-notsecure}'
     volumes:
       - db:/var/lib/mysql
+    healthcheck:
+        test:
+          - CMD
+          - mysqladmin
+          - ping
+          - '-p${DB_PASSWORD:-notsecure}'
+        retries: 3
+        timeout: 5s
 
 volumes:
   wordpress:
